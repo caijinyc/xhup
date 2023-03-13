@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "xhup",
-  "title": "xhup",
+  "name": "小鹤双拼反查词典",
+  "title": "小鹤双拼反查词典",
   "description": "",
   "icon": "xhup.png",
   "author": "caijinyc",
