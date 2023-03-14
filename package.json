@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "xhup_dictionary",
   "title": "小鹤双拼反查词典",
-  "description": "小鹤双拼反查词典，单字词组编码查询",
+  "description": "小鹤双拼反查词典，支持单字词组编码查询",
   "icon": "xhup.png",
   "author": "caijinyc",
   "categories": [
