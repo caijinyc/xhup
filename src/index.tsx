@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
-import { Action, ActionPanel, Icon, LaunchProps, List } from '@raycast/api';
-import React from 'react';
-import xhyx from '../config/xhyx.json';
-import fontCodeMap from '../config/font-code-map.json';
+import {Action, ActionPanel, Clipboard, getSelectedText, Icon, LaunchProps, List} from "@raycast/api";
+import React from "react";
+import xhyx from "../config/xhyx.json";
+import fontCodeMap from "../config/font-code-map.json";
 
 export default function Command(props: LaunchProps) {
   const [input, setInput] = React.useState(props.arguments.title);
@@ -11,16 +11,18 @@ export default function Command(props: LaunchProps) {
     { title: string; subtitle?: string; icon?: string; link?: string }[] | undefined
   >(undefined);
 
-  const search = () => {
-    if (!input) return;
-    const data = (xhyx as any)[input];
-    const fontCode = (fontCodeMap as any)[input];
+  const search = (text?: string) => {
+    const searchText = input || text;
+
+    if (!searchText) return;
+    const data = (xhyx as any)[searchText];
+    const fontCode = (fontCodeMap as any)[searchText];
 
     const getItems = () => {
       if (data === "未收录") {
         return [
           {
-            title: `${input}： 未收录的字`,
+            title: `${searchText}： 未收录的字`,
             subtitle: "非《通用规范汉字表》国发〔2013〕23号文规定用字，故未收录",
           },
         ];
@@ -41,8 +43,8 @@ export default function Command(props: LaunchProps) {
           },
           {
             title: `汉典`,
-            subtitle: `https://www.zdic.net/hans/${input}`,
-            link: `https://www.zdic.net/hans/${encodeURI(input)}`,
+            subtitle: `https://www.zdic.net/hans/${searchText}`,
+            link: `https://www.zdic.net/hans/${encodeURI(searchText)}`,
             icon: Icon.Link,
           },
         ];
@@ -61,7 +63,7 @@ export default function Command(props: LaunchProps) {
 
         return [
           {
-            title: `错误：\`${input}\` 不存在反查词典中`,
+            title: `错误：\`${searchText}\` 不存在反查词典中`,
           },
         ];
       }
@@ -71,9 +73,18 @@ export default function Command(props: LaunchProps) {
   };
 
   const isFirstMount = React.useRef(true);
+
   React.useEffect(() => {
     if (isFirstMount.current) {
-      search();
+      Clipboard.readText()
+        .then((text) => {
+          if (text && text.length === 1) {
+            search(text);
+            setInput(text);
+          }
+        })
+        .catch(() => {});
+
       isFirstMount.current = false;
     }
   }, []);
@@ -84,7 +95,7 @@ export default function Command(props: LaunchProps) {
       searchBarAccessory={
         <ActionPanel>
           <Action
-            title={"emit search"}
+            title={"Emit Search"}
             shortcut={{ modifiers: [], key: "enter" }}
             onAction={() => {
               search();
@@ -95,7 +106,7 @@ export default function Command(props: LaunchProps) {
       onSearchTextChange={(newValue) => {
         setInput(newValue);
       }}
-      searchBarPlaceholder={"Text to search..."}
+      searchBarPlaceholder={"请输入..."}
     >
       {decoded ? (
         decoded.map((item) => (
@@ -116,8 +127,8 @@ export default function Command(props: LaunchProps) {
       ) : (
         <List.EmptyView
           icon={Icon.QuestionMarkCircle}
-          title={"Nothing to Search"}
-          description={"Copy some content to your clipboard, or start typing text to decode."}
+          title={"请输入关键词进行查询"}
+          // description={"请复制关键词进行"}
         />
       )}
     </List>
