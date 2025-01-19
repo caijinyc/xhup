@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import {Action, ActionPanel, Clipboard, getSelectedText, Icon, LaunchProps, List} from "@raycast/api";
+import { Action, ActionPanel, Clipboard, getSelectedText, Icon, LaunchProps, List } from "@raycast/api";
 import React from "react";
 import xhyx from "../config/xhyx.json";
 import fontCodeMap from "../config/font-code-map.json";
@@ -12,7 +12,7 @@ export default function Command(props: LaunchProps) {
   >(undefined);
 
   const search = (text?: string) => {
-    const searchText = input || text;
+    const searchText = text || input;
 
     if (!searchText) return;
     const data = (xhyx as any)[searchText];
@@ -78,16 +78,19 @@ export default function Command(props: LaunchProps) {
     if (isFirstMount.current) {
       Clipboard.readText()
         .then((text) => {
+          console.log('clipboard', text)
           if (text && text.length === 1) {
             search(text);
-            setInput(text);
           }
+          setInput(text)
         })
         .catch(() => {});
 
       isFirstMount.current = false;
     }
   }, []);
+
+
 
   return (
     <List
@@ -105,6 +108,10 @@ export default function Command(props: LaunchProps) {
       }
       onSearchTextChange={(newValue) => {
         setInput(newValue);
+        console.log('newValue', newValue)
+        if (newValue.length === 1) {
+          search(newValue);
+        }
       }}
       searchBarPlaceholder={"请输入..."}
     >
